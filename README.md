@@ -1,98 +1,165 @@
-# Trip ELD - Smart Trip Planner & Compliance Engine
+# Trip ELD – Smart Trip Planning & HOS Compliance System
 
-Trip ELD is a production-grade Electronic Logging Device (ELD) simulation and trip planning platform. It helps truck drivers and fleet managers plan compliant routes, visualize HOS (Hours of Service) logs, and verify regulatory adherence in real-time.
+Trip ELD is a full-stack simulation platform that models real-world trucking routes and automatically generates FMCSA Hours of Service (HOS) compliant driving logs using live mapping data.
+
+The system combines geospatial APIs with a custom-built rule engine to simulate realistic long-haul trip planning, driving schedules, and regulatory compliance checks.
+
+---
+
+## Live Demo
+
+Frontend: [https://trip-planner-frontend-pied.vercel.app](https://trip-planner-frontend-pied.vercel.app)
+Backend API: [https://trip-planner-two-gamma.vercel.app](https://trip-planner-two-gamma.vercel.app)
+
+---
 
 ## Key Features
 
-### 1. Smart Routing Engine
-- **Real-Time Geocoding**: Uses OpenStreetMap Nominatim to convert city names into precise coordinates.
-- **Road Routing**: Integrates with OSRM (Open Source Routing Machine) to calculate actual road distances and travel times.
-- **Live Map Visualization**: Interactive Leaflet-based map rendering real road polylines and dynamic markers.
+### Smart Route Planning
 
-### 2. FMCSA-Compliant HOS Engine
-- **Strict Rule Enforcement**: Implements the 11-hour driving limit, 14-hour on-duty window, and the mandatory 30-minute break after 8 hours of driving.
-- **70-Hour / 8-Day Cycle Tracking**: Monitors cumulative duty time and automatically suggests 34-hour restarts when limits are reached.
-- **Segmented Simulation**: Generates granular log entries (Driving, On-Duty, Off-Duty, Sleeper Berth) based on trip distance and operational overhead.
+* Converts real-world locations into geographic coordinates using OpenStreetMap
+* Calculates road-based routes using OSRM (Open Source Routing Machine)
+* Supports multi-leg trips (origin → pickup → destination)
+* Returns realistic distance and travel duration estimates
 
-### 3. Digital Daily Log Sheets
-- **High-Fidelity Grid**: A modern 24-hour block-based grid visualization with 30-minute precision.
-- **Status Color-Coding**: Visual differentiation between operational states (Driving, On-Duty, etc.).
-- **Total Summaries**: Automatic calculation of daily totals for easy auditing.
+---
 
-### 4. Automated Compliance Audit
-- **Instant Violation Detection**: Real-time analysis of the generated plan against FMCSA Part 395 regulations.
-- **Audit Certification**: Visual "Plan Certified" or "Violation Warning" badges with detailed breakdown of regulatory breaches.
+### Hours of Service (HOS) Engine
 
-## Technology Stack
+* Simulates FMCSA compliance rules including:
+
+  * 11-hour driving limit
+  * 14-hour on-duty window
+  * Mandatory 30-minute break after 8 hours of driving
+  * 10-hour daily rest requirement
+  * 70-hour / 8-day cycle tracking
+* Breaks trips into structured daily logs
+* Generates realistic driving, duty, and rest schedules
+
+---
+
+### Compliance Validation
+
+* Automatically detects rule violations in generated trip plans
+* Provides structured compliance results for each trip
+* Ensures alignment with HOS constraints at day and cycle level
+
+---
+
+### Interactive Trip Visualization (Frontend)
+
+* Displays real road routes on an interactive map (Leaflet)
+* Visualizes trip segments using polylines
+* Shows day-wise driving logs in a structured UI
+* Provides clear compliance status indicators
+
+---
+
+## Tech Stack
 
 ### Backend
-- **Framework**: Django 4.x
-- **API**: Django Rest Framework (DRF)
-- **Geocoding**: OpenStreetMap Nominatim
-- **Routing**: OSRM (Public API)
-- **Logic**: Custom Python HOS Simulation Engine
+
+* Django 4.x
+* Django REST Framework
+* Python-based HOS simulation engine
+* OpenStreetMap Nominatim (geocoding)
+* OSRM (routing API)
 
 ### Frontend
-- **Framework**: React 19 (Vite)
-- **Styling**: Tailwind CSS + ShadCN UI
-- **Mapping**: Leaflet + React-Leaflet
-- **Icons**: Lucide React
-- **Type Safety**: TypeScript
 
-## Installation & Setup
+* React (Vite)
+* Tailwind CSS
+* ShadCN UI components
+* Leaflet / React-Leaflet (maps)
+* Lucide Icons
 
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- npm or yarn
+---
 
-### Backend Setup
-1. Navigate to the `backend` directory:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Run migrations:
-   ```bash
-   python manage.py migrate
-   ```
-5. Start the server:
-   ```bash
-   python manage.py runserver
-   ```
+## System Architecture
 
-### Frontend Setup
-1. Navigate to the `frontend` directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+The system is designed as a modular pipeline:
 
-## API Endpoints
+1. User inputs locations
+2. Backend geocodes locations into coordinates
+3. OSRM calculates real road routes
+4. HOS engine simulates driving schedule based on total distance
+5. Compliance layer validates output against FMCSA rules
+6. Frontend visualizes route and logs in real time
 
-### `POST /api/logs/calculate/`
-Calculates a full trip plan and compliance logs.
-- **Body**:
-  ```json
-  {
-    "current_location": "Chicago, IL",
-    "pickup": "Detroit, MI",
-    "dropoff": "New York, NY",
-    "used_hours": 15.5
-  }
-  ```
+---
+
+## API Endpoint
+
+### Calculate Trip Plan
+
+POST /api/logs/calculate/
+
+#### Request Body
+
+```json
+{
+  "current_location": "Chicago, IL",
+  "pickup": "Detroit, MI",
+  "dropoff": "New York, NY",
+  "used_hours": 15.5
+}
+```
+
+#### Response
+
+Returns:
+
+* total route distance
+* segmented route breakdown
+* day-wise HOS logs
+* compliance status and violations
+
+---
+
+## What This Project Demonstrates
+
+* Real-world API integration (mapping + routing services)
+* Simulation-based backend architecture
+* Rule-based engine design (HOS compliance logic)
+* Full-stack system design (frontend + backend integration)
+* State handling for multi-day process simulation
+
+---
+
+## Installation
+
+### Backend
+
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py runserver
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## Notes
+
+* Uses free public APIs (OSRM + Nominatim)
+* Designed for demonstration and educational purposes
+* Not intended for real-world regulatory enforcement
+
+---
+
+## Future Improvements
+
+* Route optimization with traffic-aware APIs
+* PDF export for HOS logs
+* Authentication and multi-user support
+* Persistent trip history database
+* Real-time driver tracking simulation
