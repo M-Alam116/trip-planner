@@ -22,7 +22,7 @@ class GeocodingService:
         
         try:
             # Nominatim requires a User-Agent header
-            headers = {'User-Agent': 'AntigravityTripPlanner/1.0'}
+            headers = {'User-Agent': 'TripPlanner/1.0'}
             url = "https://nominatim.openstreetmap.org/search"
             params = {'q': query, 'format': 'json', 'limit': 1}
             
